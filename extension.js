@@ -35,7 +35,18 @@ function activate(context) {
         applyEdit(editor.document, selection, replacementText);
     });
 
+    var addGulpTask = vscode.commands.registerCommand('extension.addGulpTask', function () {
+        // get the current editor
+        var editor = vscode.window.activeTextEditor;
+        // get the current selection
+        var selection = editor.selection;
+        var selectedText = editor.document.getText(selection);
+        var replacementText = "gulp.task('" + selectedText + "', function () {\n\treturn gulp.src('').pipe(gulp.dest(''));\n});";
+        var textEdit = editFactory(selection, replacementText);
+        applyEdit(editor.document, selection, replacementText);
+    });
     context.subscriptions.push(disposable);
+    context.subscriptions.push(addGulpTask);
 }
 exports.activate = activate;
 
@@ -47,7 +58,6 @@ exports.deactivate = deactivate;
 function positionFactory(line, char) {
     return new vscode.Position(line, char);
 }
-
 
 function editFactory(selection, content) {
     var range = new vscode.Range(positionFactory(selection.start.line, selection.start.character), positionFactory(selection.end.line, selection.end.character));
